@@ -1,0 +1,13 @@
+<odoo>
+    <!-- Tambahkan kolom baru -->
+    <record id="general_ledger_report_purchase_order" model="account.report.column">
+        <field name="name">Purchase Order</field>
+        <field name="expression_label">purchase_order</field>
+        <field name="figure_type">string</field>
+    </record>
+
+    <!-- Tambahkan kolom ke report yang sudah ada -->
+    <record id="account_reports.general_ledger_report" model="account.report">
+        <field name="column_ids" eval="[(4, ref('lww_gl.general_ledger_report_purchase_order'))]"/>
+    </record>
+</odoo>
