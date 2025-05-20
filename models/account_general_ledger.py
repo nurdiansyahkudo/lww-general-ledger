@@ -25,7 +25,7 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                                     ('name', '=', stock_picking_name)
                                 ], limit=1)
 
-                                purchase_order = False  # default value
+                                purchase_order = " "  # default value
 
                                 if picking and picking.group_id:
                                     group_name = picking.group_id.name
