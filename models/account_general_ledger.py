@@ -25,8 +25,20 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                                     ('name', '=', stock_picking_name)
                                 ], limit=1)
 
+                                purchase_order = False  # default value
+
                                 if picking and picking.group_id:
-                                    purchase_order = picking.group_id.name
+                                    group_name = picking.group_id.name
+
+                                    # Cek apakah group_name adalah nama dari purchase.order
+                                    purchase = self.env['purchase.order'].search([('name', '=', group_name)], limit=1)
+                                    if purchase:
+                                        purchase_order = group_name
+                                    else:
+                                        # Kalau bukan purchase.order, asumsikan dia sale.order
+                                        sale = self.env['sale.order'].search([('name', '=', group_name)], limit=1)
+                                        if sale:
+                                            purchase_order = picking.project_id.name
 
                         column_values['purchase_order'] = purchase_order
 
@@ -74,11 +86,13 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                   %(journal_name)s                        AS journal_name,
                   full_rec.id                             AS full_rec_name,
                   procurement_group.name                  AS purchase_order,
+                  project_id.name                  AS purchase_order,
                   %(column_group_key)s                    AS column_group_key
               FROM %(table_references)s
               JOIN account_move move                      ON move.id = account_move_line.move_id
               LEFT JOIN stock_picking ON stock_picking.name = move.ref OR stock_picking.origin = move.name OR stock_picking.origin = move.ref
               LEFT JOIN procurement_group ON stock_picking.group_id = procurement_group.id
+              LEFT JOIN project_id ON stock_picking.project_id = project_id.id
               %(currency_table_join)s
               LEFT JOIN res_company company               ON company.id = account_move_line.company_id
               LEFT JOIN res_partner partner               ON partner.id = account_move_line.partner_id
