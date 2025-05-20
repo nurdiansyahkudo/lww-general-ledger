@@ -1,7 +1,7 @@
 <odoo>
     <!-- Tambahkan kolom baru -->
     <record id="general_ledger_report_purchase_order" model="account.report.column">
-        <field name="name">Purchase Order</field>
+        <field name="name">Order Reference</field>
         <field name="expression_label">purchase_order</field>
         <field name="figure_type">string</field>
     </record>

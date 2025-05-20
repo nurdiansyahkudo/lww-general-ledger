@@ -86,13 +86,13 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                   %(journal_name)s                        AS journal_name,
                   full_rec.id                             AS full_rec_name,
                   procurement_group.name                  AS purchase_order,
-                  project_id.name                  AS purchase_order,
+                  project_project.name                         AS project_name,
                   %(column_group_key)s                    AS column_group_key
               FROM %(table_references)s
               JOIN account_move move                      ON move.id = account_move_line.move_id
               LEFT JOIN stock_picking ON stock_picking.name = move.ref OR stock_picking.origin = move.name OR stock_picking.origin = move.ref
               LEFT JOIN procurement_group ON stock_picking.group_id = procurement_group.id
-              LEFT JOIN project_id ON stock_picking.project_id = project_id.id
+              LEFT JOIN project_project ON stock_picking.project_id = project_project.id
               %(currency_table_join)s
               LEFT JOIN res_company company               ON company.id = account_move_line.company_id
               LEFT JOIN res_partner partner               ON partner.id = account_move_line.partner_id
