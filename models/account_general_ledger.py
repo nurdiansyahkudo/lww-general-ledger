@@ -40,7 +40,8 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                                         sale = self.env['sale.order'].search([('name', '=', group_name)], limit=1)
                                         if sale:
                                             purchase_order = picking.project_id.name
-                            elif move.move_type:
+                                            
+                            if move.move_type:
                                 if move.move_type == 'out_invoice':
                                     # Ambil Sales Order dari invoice line
                                     so_names = set()
