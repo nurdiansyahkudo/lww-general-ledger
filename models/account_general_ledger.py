@@ -12,6 +12,7 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                 for column_group_key, column_values in aml_values.items():
                     if isinstance(column_values, dict):
                         move_id = column_values.get('move_id')
+                        # move_type = column_values.get('move_type')
                         purchase_order = ''
 
                         if move_id:
@@ -39,7 +40,27 @@ class GeneralLedgerCustomHandler(models.AbstractModel):
                                         sale = self.env['sale.order'].search([('name', '=', group_name)], limit=1)
                                         if sale:
                                             purchase_order = picking.project_id.name
+                            elif move.move_type:
+                                if move.move_type == 'out_invoice':
+                                    # Ambil Sales Order dari invoice line
+                                    so_names = set()
+                                    for line in move.invoice_line_ids:
+                                        if line.sale_line_ids:
+                                            for so_line in line.sale_line_ids:
+                                                if so_line.order_id:
+                                                    so_names.add(so_line.order_id.name)
+                                    if so_names:
+                                        purchase_order = ', '.join(so_names)
 
+                                elif move.move_type == 'in_invoice':
+                                    # Ambil Purchase Order dari bill line
+                                    po_names = set()
+                                    for line in move.invoice_line_ids:
+                                        if line.purchase_line_id and line.purchase_line_id.order_id:
+                                            po_names.add(line.purchase_line_id.order_id.name)
+                                    if po_names:
+                                        purchase_order = ', '.join(po_names)
+                                
                         column_values['purchase_order'] = purchase_order
 
         return aml_results_per_account_id, has_more
